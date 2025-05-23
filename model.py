@@ -276,9 +276,9 @@ class E2E_model(nn.Module):
             pi = self.policy_net(torch.cat([out_bypath, fc], dim=1))。  #图2右上角的cat
             return F.softmax(pi, dim=1), pred
 
-
+#根据输入的深度、RGB和相机位姿，生成 NeRF 训练/推理所需的射线采样数据
 class NeRF_proc():
-    def __init__(self, nerf_tmp, device, nerf_list, Camera_Intrinc='cameras.txt',N_sample=192):
+    def __init__(self, nerf_tmp, device, nerf_list, Camera_Intrinc='cameras.txt',N_sample=192):#读取 cameras.txt 文件获得相机内参
         super(NeRF_proc,  self).__init__()
         self.nerf = nerf_tmp
         self.feature_t = None
