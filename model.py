@@ -344,7 +344,7 @@ def nerf_reset(nerf, lock, nerf_list):
         nerf_list[:] = []
     nerf_list.append(deepcopy(nerf.state_dict()))
     lock.release()
-
+#NeRF三维重建的训练循环
 def nerf_train(nerf, N_sample,device, lock, queue, nerf_list, reset_list, child_conn):
     nerf = nerf.to(device)
     nerf.train()
@@ -424,7 +424,7 @@ def nerf_train(nerf, N_sample,device, lock, queue, nerf_list, reset_list, child_
             nerf_reset(nerf, lock, nerf_list)
             nerf = nerf.to(device)
             child_conn.send('reset '+st)
-
+#行为克隆训练循环
 def model_train(model, device, lock, source, summary_path, model_path, init_lr,batch_Size,_flag):
     model = model.to(device)
     model.train()
