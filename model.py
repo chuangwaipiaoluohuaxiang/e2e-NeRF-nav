@@ -110,7 +110,7 @@ def quaternion_to_matrix(quaternions):
 
 def iden(x):
     return x
-
+#NeRF 架构的一个简化版本，保留了核心思想，但在层数、连接方式等细节上略有不同；NeRF本质上就是线性层拼接组成的。
 class NeRF_pi(nn.Module):
     def __init__(self, input_dim=3, W=64, pos_multires=10, dir_multires=4):
         super(NeRF_pi,self).__init__()
@@ -165,7 +165,7 @@ class NeRF_pi(nn.Module):
         out2 = self.part3(torch.cat([out1, dirs], -1)).view(N_ray, N_sample, -1)
         rgb = self.rgb_linear(out2).view(N_ray, N_sample, -1)
         return torch.cat([alpha, rgb], dim=2), out2
-
+#用自注意力机制捕获空间各位置间的依赖关系
 class Prd_Net(nn.Module): 
     def __init__(self):
         super(Prd_Net, self).__init__()
@@ -217,7 +217,8 @@ class Prd_Net(nn.Module):
 
         pred = self.fc(midd)
 
-        return midd, pred
+        return midd, pred      #midd：全局特征，用于后续决策或融合；pred：辅助任务的预测输出
+
 #处理输入的原始观测
 class bypath(nn.Module):
     def __init__(self):
@@ -272,7 +273,7 @@ class E2E_model(nn.Module):
 
             fc, pred = self.pred_net(pred_in.permute([0, 3, 1, 2]))
             out_bypath = self.bypath(x)
-            pi = self.policy_net(torch.cat([out_bypath, fc], dim=1))
+            pi = self.policy_net(torch.cat([out_bypath, fc], dim=1))。  #图2右上角的cat
             return F.softmax(pi, dim=1), pred
 
 
