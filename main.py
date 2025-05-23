@@ -111,7 +111,8 @@ def main(mode):
         p0 = Process(target=model_train, args=(model, device, source_lock, source, summary_path, model_path,init_lr, batch_size, _flag,))
         p0.start()
         process.append(p0)
-        #创建另一个新进程，运行nerf_train函数，负责神经渲染模型（NeRF）的训练。
+        #创建另一个新进程，运行nerf_train函数，负责神经渲染模型（NeRF）的训练
+        #主模型和NeRF模型并行训练
         p1 = Process(target=nerf_train, args=(nerf, nerf_proc.N_sample, device, lock, queue, nerf_list, reset_list, child_conn,))
         p1.start()
         process.append(p1)
