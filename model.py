@@ -218,7 +218,7 @@ class Prd_Net(nn.Module):
         pred = self.fc(midd)
 
         return midd, pred
-
+#处理输入的原始观测
 class bypath(nn.Module):
     def __init__(self):
         super(bypath, self).__init__()
@@ -264,7 +264,7 @@ class E2E_model(nn.Module):
             fc,pred = self.pred_net(pred_in.permute([0,3,1,2]))
 
             out_bypath = self.bypath(x)
-            pi = self.policy_net(torch.cat([out_bypath, fc], dim=1))
+            pi = self.policy_net(torch.cat([out_bypath, fc], dim=1))#policy_net 实现了动作决策
             return F.softmax(pi, dim=1)
         else:
             a, b, c, d = out_pred.shape
