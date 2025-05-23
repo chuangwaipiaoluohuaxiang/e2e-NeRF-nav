@@ -16,6 +16,8 @@ import torch.multiprocessing as mp
 from torch.multiprocessing import Process, Pipe, Queue
 warnings.filterwarnings("ignore", category=UserWarning)
 
+#NeRF_pi定义了神经辐射场模型，nerf_train负责训练；E2E_model包含神经网络结构和前向推理逻辑。
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(BASE_DIR)
 
@@ -102,15 +104,18 @@ def main(mode):
             os.makedirs(model_path)
         if not os.path.exists(summary_path):
             os.makedirs(summary_path)
-        
+        ##实例化了一个NeRF_proc对象；nerf_tmp是NeRF模型实例
         nerf_proc = NeRF_proc(nerf_tmp, device, nerf_list, Camera_Intrinc,N_sample=N_sample)
         process = []
+        #创建一个新进程来执行model_train函数，负责端到端模型（如策略网络）的训练
         p0 = Process(target=model_train, args=(model, device, source_lock, source, summary_path, model_path,init_lr, batch_size, _flag,))
         p0.start()
         process.append(p0)
+        #创建另一个新进程，运行nerf_train函数，负责神经渲染模型（NeRF）的训练。
         p1 = Process(target=nerf_train, args=(nerf, nerf_proc.N_sample, device, lock, queue, nerf_list, reset_list, child_conn,))
         p1.start()
         process.append(p1)
+        #实例化dataset对象
         data = dataset(dataset_root, device,depth_max)
         cache=[]
         episodeCount = 0
