@@ -323,14 +323,14 @@ class NeRF_proc():
 
         raw, out2 = minibatch(nerf_batch, self.nerf, pts, viewdirs)
  
-        pred = render_pred(raw, out2, z_vals, self.H // 2, self.W //2, is_flat=False)  
+        pred = render_pred(raw, out2, z_vals, self.H // 2, self.W //2, is_flat=False)  #render_pred：将NeRF输出的特征（raw, out2）和采样深度（z_vals）进一步处理，形成空间特征图（pred）。
 
         if step % 3 == 0:
             if other_device==None:
                 queue.put([pts, viewdirs, rgb.reshape(-1,3), depths, z_vals])
             else:
                 queue.put([pts.to(other_device), viewdirs.to(other_device), rgb.reshape(-1,3).to(other_device), depths.to(other_device), z_vals.to(other_device)])
-        return  torch.cat([pred, self.feature_t], dim=-1).unsqueeze(0)
+        return  torch.cat([pred, self.feature_t], dim=-1).unsqueeze(0)        #将当前渲染得到的特征（pred）与历史/记忆特征（self.feature_t）拼接，形成初步记忆特征。
 
 
 def nerf_reset(nerf, lock, nerf_list):
