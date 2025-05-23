@@ -127,7 +127,7 @@ def inter_sample(rays_dp,N_sample, half_dist,jitter=True, is_test = False):
 
     return z_vals
 
-
+#用于根据深度图和采样参数，生成每个像素射线的采样深度（z_vals）和真实深度（depths），用于NeRF体渲染。
 def generate_z_vals_and_depths(depth,N_sample = 64,half_dist=1.0,jitter=True):
     rays_dp = t.reshape(depth[0,-1, 0:-1:2,0:-1:2], [-1, 1])*10.
     #rays_dp = t.reshape(depth[0, -1], [-1, 1]) * 10.
@@ -148,7 +148,7 @@ def get_rays(H, W, K, c2w):
     # Translate camera frame's origin to the world frame. It is the origin of all rays.
     rays_o = c2w[:3,-1].expand(rays_d.shape)
     return t.stack([rays_o, rays_d],dim=0) # [2,H,W,3]
-
+#根据相机内参、外参和采样深度，生成每个像素的射线起点、方向和采样点云（3D点）。
 def generate_rays_half(poses,H, W, K, z_vals):
 
     rays = t.stack([get_rays(H, W, K, p) for p in [poses]], 0)  # [1, ro+rd, H, W, 3]
